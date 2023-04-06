@@ -6,6 +6,7 @@
 int thread_num = 0;
 int max_thread_num = 0;
 
+// 原始斐波那契递归函数
 int fib(int n) {
 	if(n<=1)
 		return 1;
@@ -15,6 +16,8 @@ int fib(int n) {
 
 void *fib_thread(void *);
 
+// 用于创建线程 当达到最大线程数时 则返回false
+// 注意: 这里要传入指针 否则就是临时变量 会被回收内存
 int create_thread(pthread_t *thread, int *argv) {
 	if(thread_num == max_thread_num)
 		return 0;
@@ -23,6 +26,7 @@ int create_thread(pthread_t *thread, int *argv) {
 	return 1;
 }
 
+// 不能单独调用函数来等待线程
 int wait_thread(pthread_t *thread) {
 	int ret_value;
 	pthread_join(*thread, (void *)&ret_value);
@@ -54,14 +58,15 @@ void *fib_thread(void* n_pointer) {
 			pthread_join(thread2, (void *)&ret2);
 		else
 			ret2 = fib(n2);
+		
 		// 返回 最终结果
 		int res = ret1 + ret2;
 		pthread_exit((void *)res);
 	}
-	thread_num--;
 }
 
 int main(int argc, char* argv[]) {
+	// 1. 读取外部参数
 	if (argc!=3) {
 		printf("usage:%s <n> <pthread number>\n", argv[0]);
 		exit(1);
@@ -70,20 +75,24 @@ int main(int argc, char* argv[]) {
 	int n = atoi(argv[1]);
 	max_thread_num = atoi(argv[2]) + 1;
 	
+	// 2. 记录结果
 	int res;
-
 	struct timeval start_time, end_time;
 	double exec_time;
+
+	// 3. 创建线程
 	pthread_t thread;
-	
+
 	gettimeofday(&start_time, NULL);
 	pthread_create(&thread, NULL, fib_thread, (void *)&n);
 	pthread_join(thread, (void *)&res);
 	gettimeofday(&end_time, NULL);
 	
+	// 4. 计算执行时间
 	exec_time = (end_time.tv_sec - start_time.tv_sec) * 1000.0;
 	exec_time += (end_time.tv_usec - start_time.tv_usec) / 1000.0;
-
-//	printf("Result: %3d, (%.3fms)\n", res, exec_time); 
-	printf("%.3f", exec_time);
+	
+	// 5. 输出结果
+	printf("Result: %3d, (%.3fms)\n", res, exec_time); 
+//	printf("%.3f", exec_time);
 }
