@@ -41,14 +41,14 @@ void *fib_thread(void* n_pointer) {
 		pthread_exit((void *)1);
 	else {
 		pthread_t thread1, thread2;
+		int n1 = n-1, n2 = n-2;
+
 		// 创建线程
 		int flag1, flag2;
-		int n1 = n-1, n2 = n-2;
 		flag1 = create_thread(&thread1, &n1);
 		flag2 = create_thread(&thread2, &n2);
 		
-		// 等待线程结束
-		// 如果没有创建线程 则调用递归的fib解决
+		// 等待线程 如果没有创建线程 则调用fib函数
 		int ret1, ret2;
 		if (flag1)
 			pthread_join(thread1, (void *)&ret1);
@@ -59,9 +59,9 @@ void *fib_thread(void* n_pointer) {
 		else
 			ret2 = fib(n2);
 		
-		// 返回 最终结果
-		int res = ret1 + ret2;
-		pthread_exit((void *)res);
+		// 退出进程
+		int result = ret1 + ret2;
+		pthread_exit((void *)result);
 	}
 }
 

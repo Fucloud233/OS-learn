@@ -21,13 +21,13 @@ void *fib(void* n_pointer) {
 		
 		// 退出进程
 		int result = ret1 + ret2;
-		pthread_exit((void*)(result));
+		pthread_exit((void*)result);
 	}
 }
 
 int main(){
 	pthread_t thread;
-	int n = 5, ret;
+	int n = 100, ret;
 	// printf("Main Thread Running\n");
 	pthread_create(&thread, NULL, fib, (void *) &n);
 	pthread_join(thread, (void *)&ret);
