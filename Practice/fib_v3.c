@@ -93,6 +93,6 @@ int main(int argc, char* argv[]) {
 	exec_time += (end_time.tv_usec - start_time.tv_usec) / 1000.0;
 	
 	// 5. 输出结果
-	printf("Result: %3d, (%.3fms)\n", res, exec_time); 
-//	printf("%.3f", exec_time);
+//	printf("Result: %3d, (%.3fms)\n", res, exec_time); 
+	printf("%.3f", exec_time);
 }
