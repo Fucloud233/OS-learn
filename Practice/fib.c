@@ -9,7 +9,6 @@ void *fib(void* n_pointer) {
 	else {
 		pthread_t thread1, thread2;
 		int n1 = n-1, n2 = n-2;	
-		// printf("n1 = %d, n2 = %d\n", n1, n2);
 
 		// 创建线程
 		pthread_create(&thread1, NULL, fib, (void *)&n1);
@@ -22,7 +21,6 @@ void *fib(void* n_pointer) {
 		
 		// 退出进程
 		int result = ret1 + ret2;
-		// printf("MidRes: %d\n", result);
 		pthread_exit((void*)(result));
 	}
 }
@@ -34,5 +32,4 @@ int main(){
 	pthread_create(&thread, NULL, fib, (void *) &n);
 	pthread_join(thread, (void *)&ret);
 	printf("fib(%d) = %d\n", n, ret);	
-
 }
