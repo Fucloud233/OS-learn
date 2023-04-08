@@ -15,7 +15,7 @@ do
 	do
 		# run 3 times
 		echo -n -e "$i\t$j\t" >> $file
-		for k in {1..50}
+		for k in {1..100}
 		do
 			./fib_v3 $j $i >> $file
 			echo -n -e '\t' >> $file
