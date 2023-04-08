@@ -86,10 +86,19 @@ int main(int argc, char* argv[]) {
 
 	gettimeofday(&start_time, NULL);
 	
-	pthread_create(&thread1, NULL, fib_thread, (void *)&n1);
-	pthread_create(&thread2, NULL, fib_thread, (void *)&n2);
-	pthread_join(thread1, (void *)&ret1);
-	pthread_join(thread2, (void *)&ret2);
+	int flag1, flag2;
+	flag1 = create_thread(&thread1, &n1);
+	flag2 = create_thread(&thread2, &n2);
+	
+	if(flag1)
+		pthread_join(thread1, (void *)&ret1);
+	else
+		ret1 = fib(n1);
+
+	if(flag2)
+		pthread_join(thread2, (void *)&ret2);
+	else
+		ret2 = fib(n2);
 	res = ret1 + ret2;
 	
 	gettimeofday(&end_time, NULL);
@@ -99,6 +108,6 @@ int main(int argc, char* argv[]) {
 	exec_time += (end_time.tv_usec - start_time.tv_usec) / 1000.0;
 	
 	// 5. 输出结果
-//	printf("Result: %3d, (%.3fms)\n", res, exec_time); 
-	printf("%.3f", exec_time);
+	printf("Result: %3d, (%.3fms)\n", res, exec_time); 
+//	printf("%.3f", exec_time);
 }
