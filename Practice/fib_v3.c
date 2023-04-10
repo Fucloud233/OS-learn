@@ -26,12 +26,12 @@ int create_thread(pthread_t *thread, int *argv) {
 	return 1;
 }
 
-// 不能单独调用函数来等待线程
-int wait_thread(pthread_t *thread) {
-	int ret_value;
+// 可以使用封装函数调用pthread_join
+// 但是不能使用局部变量 因为函数之间也是存在权限问题
+// 一个函数不能对另一个函数中的变量进行操作
+void wait_thread(pthread_t *thread, int *ret_value) {
 	pthread_join(*thread, (void *)&ret_value);
-	thread_num--;
-	return ret_value;
+//	thread_num--;
 }
 
 void *fib_thread(void* n_pointer) {
@@ -51,11 +51,13 @@ void *fib_thread(void* n_pointer) {
 		// 等待线程 如果没有创建线程 则调用fib函数
 		int ret1, ret2;
 		if (flag1)
-			pthread_join(thread1, (void *)&ret1);
+//			pthread_join(thread1, (void *)&ret1);
+			wait_thread(&thread1, &ret1);
 		else
 			ret1 = fib(n1);
 		if (flag2) 
-			pthread_join(thread2, (void *)&ret2);
+//			pthread_join(thread2, (void *)&ret2);
+			wait_thread(&thread2, &ret2);
 		else
 			ret2 = fib(n2);
 		
