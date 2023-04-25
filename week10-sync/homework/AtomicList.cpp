@@ -10,9 +10,13 @@ void AtomicList::push(int value) {
 }
 
 int AtomicList::pop() {
-//	int value= header.load().next->load().value;
-//	header = header.load()->next.load()->next;
-	return -1;
+	Node* cur = header.load()->next.load();
+	
+	int value = cur->value.load();
+	header.load()->next.store(cur->next.load());
+	
+	delete cur;
+	return value;
 }
 
 void AtomicList::display() {
@@ -24,11 +28,17 @@ void AtomicList::display() {
 	cout<<endl;
 }
 
-int main() {
+void test() {
 	AtomicList list;
 
 	for(int i=0; i<5; i++) 
 		list.push(i+1);
 //	list.push(4);
 	list.display();
+	
+	for(int i=0; i<5; i++)
+		list.pop();
+
+	list.display();
+
 }
