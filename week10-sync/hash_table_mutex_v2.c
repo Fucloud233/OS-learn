@@ -26,6 +26,7 @@ void hash_init() {
     }
 }
 
+// insert总能成功
 void hash_insert(int key, int value) {
     int index = key % TABLE_SIZE;
     node_t* new_node = (node_t*)malloc(sizeof(node_t));
@@ -59,8 +60,10 @@ int hash_search(int key) {
     return -1; // key not found
 }
 
+// delete可能会失败
 int hash_delete(int key) {
-   	int flag = 0;
+   	// 判断节点是否被正常删除
+	int flag = 0;
 
    	int index = key % TABLE_SIZE;
     node_t* current = table[index];
@@ -75,6 +78,7 @@ int hash_delete(int key) {
                 previous->next = current->next;
             }
             free(current);
+			// 如果被正常删除 则返回1
 			flag = 1;
             break;
         }
@@ -92,6 +96,10 @@ int expect_node_num = 0;
 void* worker(void* arg) {
     srand(time(NULL) + (long)arg); // seed random number generator
     int n_reads = 0, n_writes = 0, n_deletes = 0;
+	
+	// 为了不干扰上述记录运行次数的变量
+	// 这里创建一个新变量用来记录实际运行的变量
+	int n_changes = 0;
 
     struct timespec start_time, end_time;
     clock_gettime(CLOCK_REALTIME, &start_time); // start timer
@@ -107,16 +115,19 @@ void* worker(void* arg) {
             int value = rand() % 1000; // assume values are integers in [0, 1000)
             hash_insert(key, value);
             n_writes++;
+			n_changes++;
         } else {
             int key = rand() % N_OPERATIONS;
-            n_deletes += hash_delete(key);
+			// 根据hash_delete返回的flag 来计算真实被删除的值
+            n_deletes++;
+			n_changes -= hash_delete(key);
         }
     }
 
     clock_gettime(CLOCK_REALTIME, &end_time); // end timer
     
 	// 使用原子操作 记录时间修改的node数量 
-	__sync_fetch_and_add(&expect_node_num, n_writes-n_deletes);
+	__sync_fetch_and_add(&expect_node_num, n_changes);
 	
 	double elapsed_time = (end_time.tv_sec - start_time.tv_sec) + 1e-9 * (end_time.tv_nsec - start_time.tv_nsec);
     printf("Thread %ld finished: %.0f reads/sec, %.0f writes/sec, %.0f deletes/sec\n", (long)arg, n_reads / elapsed_time, n_writes / elapsed_time, n_deletes / elapsed_time);
