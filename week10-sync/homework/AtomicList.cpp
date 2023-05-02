@@ -17,8 +17,17 @@ void AtomicList::push(int value) {
 }
 
 int AtomicList::pop() {
+	// 0. 判断链表是否为空 防止出现段错误
+	if(!header.load()) {
+		cout<< "[Error] The list is empty!" << endl;
+		return -1;
+	}
+
+	// 1. 将头结点替换成下一个
 	Node* head_node = header.exchange(header.load()->next);
+	// 2. 得到其值用于返回
 	int value = head_node->value;
+	// 3. 释放内存
 	delete head_node;
 	return value;
 }
@@ -31,22 +40,3 @@ void AtomicList::display() {
 	}
 	cout<<endl;
 }
-
-void test() {
-	AtomicList list;
-
-	for(int i=0; i<5; i++) 
-		list.push(i+1);
-//	list.push(4);
-	list.display();
-	
-//	for(int i=0; i<5; i++)
-//		list.pop();
-
-	list.display();
-
-}
-
-//int main () {
-//	test();
-//}

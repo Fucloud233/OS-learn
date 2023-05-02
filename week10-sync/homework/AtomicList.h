@@ -1,10 +1,7 @@
 #include <atomic>
 using namespace std;
 
-#ifndef NULL
-#define NULL 0
-#endif
-
+// 定义节点
 struct Node {
 	int value;
 	Node* next;
@@ -12,8 +9,10 @@ struct Node {
 	Node(int value) :value(value), next(nullptr) {}
 };
 
+// 定义原子链表
 class AtomicList {
 private:
+	// 使用原子变量来存储链表
 	atomic<Node* > header;
 
 public:
