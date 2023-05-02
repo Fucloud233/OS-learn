@@ -1,14 +1,15 @@
 #include <atomic>
 using namespace std;
 
-struct Node {
-	atomic<int> value;
-	atomic<Node*> next;
+#ifndef NULL
+#define NULL 0
+#endif
 
-	Node(int value, Node* next) {
-		this->value.store(value);
-		this->next.store(next);
-	}
+struct Node {
+	int value;
+	Node* next;
+
+	Node(int value) :value(value), next(nullptr) {}
 };
 
 class AtomicList {
