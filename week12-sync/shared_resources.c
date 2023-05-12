@@ -1,5 +1,6 @@
 #include <pthread.h>
 #include <stdio.h>
+#include <unistd.h> 
 
 pthread_mutex_t lock;
 int shared_resource = 0;
