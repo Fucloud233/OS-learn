@@ -6,6 +6,7 @@
 #define N_THREADS 3
 #define N_RESOURCES 2
 
+// 设定资源分配的初始状态
 int maxinum[N_THREADS][N_RESOURCES] = {
     {5, 10}, {3, 1}, {10, 11}
 }; 
